@@ -8,6 +8,7 @@ namespace :load do
   task :defaults do
     set :unicorn_service, -> { "unicorn_#{fetch(:application)}_#{fetch(:stage)}" }
     set :templates_path, 'config/deploy/templates'
+    set :unicorn_service_path, -> { "/etc/init.d/#{fetch(:unicorn_service)}" }
     set :unicorn_pid, -> { unicorn_default_pid_file }
     set :unicorn_config, -> { unicorn_default_config_file }
     set :unicorn_logrotate_config, -> { unicorn_default_logrotate_config_file }
@@ -63,7 +64,7 @@ namespace :unicorn do
     desc "#{command} unicorn"
     task command do
       on roles :app do
-        sudo 'service', fetch(:unicorn_service), command
+        sudo fetch(:unicorn_service_path), command
       end
     end
   end
